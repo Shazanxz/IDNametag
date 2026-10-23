@@ -14,7 +14,7 @@ static HMODULE g_self = nullptr;
 
 
 static bool IsSafeFormat(const char* fmt) {
-    int stage = 0; // 0 = esperando %s, 1 = esperando %d, 2 = completo
+    int stage = 0; // 0 = waiting for %s, 1 = waiting for %d, 2 = done
     for (const char* p = fmt; *p; ++p) {
         if (*p != '%') continue;
         ++p;
@@ -35,7 +35,7 @@ static void LoadConfig() {
     char value[sizeof(g_format)] = {};
     GetPrivateProfileStringA("NameTag", "Format", kDefaultFormat, value, sizeof(value), path);
 
-    // limite de tamanho o buffer do SA-MP para o nametag e pequeno (nome tem ate 24 chars).
+    // Length limit: SA-MP's nametag buffer is small (names are up to 24 chars).
     if (strlen(value) > 24 || !IsSafeFormat(value))
         strcpy_s(g_format, kDefaultFormat);
     else
@@ -54,7 +54,7 @@ static IMAGE_NT_HEADERS* NtHeaders(HMODULE mod) {
 static const BYTE* FindFormatString(HMODULE mod) {
     auto base = reinterpret_cast<const BYTE*>(mod);
     DWORD size = NtHeaders(mod)->OptionalHeader.SizeOfImage;
-    const size_t len = sizeof(kOriginalFormat); // inclui o '\0'
+    const size_t len = sizeof(kOriginalFormat); // includes the '\0'
 
     auto sec = IMAGE_FIRST_SECTION(NtHeaders(mod));
     for (WORD i = 0; i < NtHeaders(mod)->FileHeader.NumberOfSections; ++i, ++sec) {
@@ -110,8 +110,8 @@ static DWORD WINAPI MainThread(LPVOID) {
     int patched = fmt ? PatchReferences(samp, fmt) : 0;
 
     char msg[128];
-    sprintf_s(msg, "[IDNameTag] string %s, %d referencia(s) alterada(s)\n",
-              fmt ? "encontrada" : "NAO encontrada", patched);
+    sprintf_s(msg, "[IDNameTag] format string %s, %d reference(s) patched\n",
+              fmt ? "found" : "NOT found", patched);
     OutputDebugStringA(msg);
     return 0;
 }

@@ -32,17 +32,25 @@ static void LoadConfig() {
     char* dot = strrchr(path, '.');
     if (dot) strcpy_s(dot, path + MAX_PATH - dot, ".ini");
 
+    char probe[8];
+    if (!GetPrivateProfileStringA("NameTag", "Format", "", probe, sizeof(probe), path))
+        WritePrivateProfileStringA("NameTag", "Format", kDefaultFormat, path);
+    if (!GetPrivateProfileStringA("NameTag", "Disable_ID", "", probe, sizeof(probe), path))
+        WritePrivateProfileStringA("NameTag", "Disable_ID", "0", path);
+
+    if (GetPrivateProfileIntA("NameTag", "Disable_ID", 0, path) != 0) {
+        strcpy_s(g_format, "%s");
+        return;
+    }
+
     char value[sizeof(g_format)] = {};
     GetPrivateProfileStringA("NameTag", "Format", kDefaultFormat, value, sizeof(value), path);
 
-    // Length limit: SA-MP's nametag buffer is small (names are up to 24 chars).
+    // Length limit SA-MP's nametag buffer is small (names are up to 24 chars).
     if (strlen(value) > 24 || !IsSafeFormat(value))
         strcpy_s(g_format, kDefaultFormat);
     else
         strcpy_s(g_format, value);
-
-    if (GetFileAttributesA(path) == INVALID_FILE_ATTRIBUTES)
-        WritePrivateProfileStringA("NameTag", "Format", kDefaultFormat, path);
 }
 
 static IMAGE_NT_HEADERS* NtHeaders(HMODULE mod) {

@@ -21,9 +21,12 @@ An `.asi` plugin for **SA-MP** that changes player nametags from `Name (45)` to 
 ```ini
 [NameTag]
 Format=%s (ID: %d)
+Disable_ID=0
 ```
 
 `%s` is the player's **name** and `%d` is their **ID**.
+
+Set `Disable_ID=1` to hide the ID and show only the name (`LoremIpsum`). When it is on, `Format` is ignored.
 
 | `Format=`     | Result                  |
 |---------------|-------------------------|

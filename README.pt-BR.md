@@ -21,9 +21,12 @@ O `IDNameTag.ini` é criado sozinho na primeira vez que o jogo abre.
 ```ini
 [NameTag]
 Format=%s (ID: %d)
+Disable_ID=0
 ```
 
 `%s` é o **nome** do jogador e `%d` é o **ID**.
+
+Use `Disable_ID=1` para esconder o ID e mostrar só o nome (`LoremIpsum`). Com essa opção ligada, o `Format` é ignorado.
 
 | `Format=`     | Resultado               |
 |---------------|-------------------------|
